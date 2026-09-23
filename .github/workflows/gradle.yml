@@ -26,15 +26,28 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          packages: >-
-            cmdline-tools;latest
+          packages: |
             platform-tools
-            platforms;android-34
-            build-tools;34.0.0
+            platforms;android-35
+            build-tools;35.0.0
+          accept-android-sdk-license: true
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
+          gradle-version: '8.7'
+
+      - name: Grant execute permission (only needed if a gradlew is committed)
+        run: '[ -f gradlew ] && chmod +x gradlew || true'
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/*.apk        with:
           gradle-version: '8.7'
 
       - name: Grant execute permission (only needed if a gradlew is committed)
